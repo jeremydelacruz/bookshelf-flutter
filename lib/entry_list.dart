@@ -7,49 +7,47 @@ class EntryList extends StatelessWidget {
   EntryList(this.entries, {this.deleteEntry});
 
   Widget _buildEntry(BuildContext context, int index) {
-    return Card(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            height: 120.0,
-            width: 120.0,
-            child: Image.asset(
-              entries[index]['image'],
-              fit: BoxFit.fitHeight,
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(5.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Container(
-                    child: Text(
-                      entries[index]['title'],
-                      style: TextStyle(
-                        fontFamily: 'Raleway',
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  FlatButton(
-                    color: Theme.of(context).primaryColor,
-                    child: Text('[Details]'),
-                    onPressed: () => Navigator.pushNamed<bool>(
-                                context, '/book/${index.toString()}')
-                            .then((bool value) {
-                          if (value) deleteEntry(index);
-                        }),
-                  )
-                ],
+    return GestureDetector(
+      onTap: () =>
+          Navigator.pushNamed<bool>(context, '/book/${index.toString()}')
+              .then((bool value) {
+            if (value) deleteEntry(index);
+          }),
+      child: Card(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 120.0,
+              width: 120.0,
+              child: Image.asset(
+                entries[index]['image'],
+                fit: BoxFit.fitHeight,
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(5.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Container(
+                      child: Text(
+                        entries[index]['title'],
+                        style: TextStyle(
+                          fontFamily: 'Raleway',
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -69,6 +67,7 @@ class EntryList extends StatelessWidget {
   /// only renders what's on screen
   @override
   Widget build(BuildContext context) {
+    // TODO: add some text above the list
     return _buildEntryList();
   }
 }
