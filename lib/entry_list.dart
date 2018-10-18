@@ -1,32 +1,53 @@
 import 'package:flutter/material.dart';
 
-import 'pages/book.dart';
-
 class EntryList extends StatelessWidget {
-  final List<Map<String, String>> entries;
+  final List<Map<String, dynamic>> entries;
   final Function deleteEntry;
 
   EntryList(this.entries, {this.deleteEntry});
 
   Widget _buildEntry(BuildContext context, int index) {
     return Card(
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Image.asset(entries[index]['image']),
-          Text(entries[index]['title']),
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlatButton(
-                child: Text('info'),
-                onPressed: () => Navigator.pushNamed<bool>(
-                            context, '/book/' + index.toString())
-                        .then((bool value) {
-                      if (value) deleteEntry(index);
-                    }),
-              )
-            ],
-          )
+          Container(
+            height: 120.0,
+            width: 120.0,
+            child: Image.asset(
+              entries[index]['image'],
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(5.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      entries[index]['title'],
+                      style: TextStyle(
+                        fontFamily: 'Raleway',
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  FlatButton(
+                    color: Theme.of(context).primaryColor,
+                    child: Text('[Details]'),
+                    onPressed: () => Navigator.pushNamed<bool>(
+                                context, '/book/${index.toString()}')
+                            .then((bool value) {
+                          if (value) deleteEntry(index);
+                        }),
+                  )
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -39,7 +60,7 @@ class EntryList extends StatelessWidget {
             itemCount: entries.length,
           )
         : Center(
-            child: Text('Your reading list is empty, try adding some'),
+            child: Text('Your reading list is empty, try adding one!'),
           );
   }
 

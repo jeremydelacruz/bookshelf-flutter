@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import '../entry_manager.dart';
 
 class BooksPage extends StatelessWidget {
-  final List<Map<String, String>> entries;
-  final Function addEntry;
+  final List<Map<String, dynamic>> entries;
   final Function deleteEntry;
 
-  BooksPage(this.entries, this.addEntry, this.deleteEntry);
+  BooksPage(this.entries, this.deleteEntry);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class BooksPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Your Bookshelf'),
       ),
-      body: EntryManager(entries, addEntry, deleteEntry),
+      body: EntryManager(entries, deleteEntry),
     );
   }
 }

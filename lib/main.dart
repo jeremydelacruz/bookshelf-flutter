@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
+import 'package:flutter/rendering.dart';
 
 import './pages/auth.dart';
 import './pages/book.dart';
@@ -16,9 +16,9 @@ class BookshelfApp extends StatefulWidget {
 }
 
 class _BookshelfAppState extends State<BookshelfApp> {
-  List<Map<String, String>> _entries = [];
+  List<Map<String, dynamic>> _entries = [];
 
-  void _addEntry(Map<String, String> entry) {
+  void _addEntry(Map<String, dynamic> entry) {
     setState(() {
       _entries.add(entry);
     });
@@ -36,12 +36,13 @@ class _BookshelfAppState extends State<BookshelfApp> {
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.primaries[5],
+        fontFamily: 'Raleway'
       ),
-      // home: AuthPage(),
       routes: {
-        '/': (BuildContext context) =>
-            BooksPage(_entries, _addEntry, _deleteEntry),
-        '/manage': (BuildContext context) => ManageBooksPage(),
+        '/': (BuildContext context) => AuthPage(),
+        '/books': (BuildContext context) => BooksPage(_entries, _deleteEntry),
+        '/manage': (BuildContext context) =>
+            ManageBooksPage(_addEntry, _deleteEntry),
       },
 
       onGenerateRoute: (RouteSettings settings) {
@@ -61,8 +62,7 @@ class _BookshelfAppState extends State<BookshelfApp> {
 
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(
-          builder: (BuildContext context) =>
-              BooksPage(_entries, _addEntry, _deleteEntry),
+          builder: (BuildContext context) => BooksPage(_entries, _deleteEntry),
         );
       },
     );

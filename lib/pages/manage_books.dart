@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
-import './books.dart';
 import './book_search.dart';
 import './edit_books.dart';
 
 class ManageBooksPage extends StatelessWidget {
+  final Function addEntry;
+  final Function deleteEntry;
+
+  ManageBooksPage(this.addEntry, this.deleteEntry);
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -20,7 +24,7 @@ class ManageBooksPage extends StatelessWidget {
               ListTile(
                 title: Text('Your Bookshelf'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/');
+                  Navigator.pushReplacementNamed(context, '/books');
                 },
               )
             ],
@@ -42,7 +46,7 @@ class ManageBooksPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[BookSearchPage(), EditBooksPage()],
+          children: <Widget>[BookSearchPage(addEntry), EditBooksPage(deleteEntry)],
         ),
       ),
     );
