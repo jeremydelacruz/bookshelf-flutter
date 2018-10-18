@@ -24,6 +24,7 @@ class EntryList extends StatelessWidget {
               padding: EdgeInsets.all(5.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Container(
                     child: Text(
