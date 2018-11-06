@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 class BookPage extends StatelessWidget {
   final String title;
+  final List<String> authors;
+  final String description;
   final String imageUrl;
 
-  BookPage(this.title, this.imageUrl);
+  BookPage(this.title, this.authors, this.description, this.imageUrl);
 
   _showWarningDialog(BuildContext context) {
     showDialog(
@@ -48,7 +50,7 @@ class BookPage extends StatelessWidget {
             Image.asset(imageUrl),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: Text('Details'),
+              child: Text(description),
             ),
             Container(
               padding: EdgeInsets.all(10.0),

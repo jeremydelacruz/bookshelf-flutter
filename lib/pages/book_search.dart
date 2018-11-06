@@ -1,3 +1,4 @@
+import 'package:bookshelf/model/book_entry.dart';
 import 'package:flutter/material.dart';
 
 class BookSearchPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _BookSearchPage extends State<BookSearchPage> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(10.0),
+
       /// consider switching to more performant builder
       child: ListView(
         children: <Widget>[
@@ -38,10 +40,18 @@ class _BookSearchPage extends State<BookSearchPage> {
             child: Text('[ADD]'),
             onPressed: () {
               /// replace this with custom object
-              final Map<String, dynamic> entry = {
-                'title': _query,
-                'image': 'assets/placeholder.jpg'
-              };
+              final BookEntry entry = BookEntry(
+                title: _query,
+                authors: ['John', 'Jane'],
+                description: 'Placeholder description',
+                imageLink: 'assets/placeholder.jpg',
+              );
+              // {
+              //   'title': _query,
+              //   'authors': ['John Doe', 'Jane Doe'],
+              //   'description': 'placeholder',
+              //   'image': 'assets/placeholder.jpg'
+              // };
               widget.addEntry(entry);
               Navigator.pushReplacementNamed(context, '/books');
             },

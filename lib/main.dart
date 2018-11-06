@@ -1,3 +1,4 @@
+import 'package:bookshelf/model/book_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -8,6 +9,7 @@ import './pages/manage_books.dart';
 
 void main() => runApp(BookshelfApp());
 
+///
 class BookshelfApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -15,15 +17,18 @@ class BookshelfApp extends StatefulWidget {
   }
 }
 
+///
 class _BookshelfAppState extends State<BookshelfApp> {
-  List<Map<String, dynamic>> _entries = [];
+  List<BookEntry> _entries = [];
 
-  void _addEntry(Map<String, dynamic> entry) {
+  /// adds an entry to the list and updates state
+  void _addEntry(BookEntry entry) {
     setState(() {
       _entries.add(entry);
     });
   }
 
+  /// deletes an entry from the list and updates state
   void _deleteEntry(int index) {
     setState(() {
       _entries.removeAt(index);
@@ -34,17 +39,16 @@ class _BookshelfAppState extends State<BookshelfApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.primaries[5],
-        fontFamily: 'Raleway'
-      ),
+          brightness: Brightness.light,
+          primarySwatch: Colors.primaries[5],
+          fontFamily: 'Raleway'),
       routes: {
         '/': (BuildContext context) => AuthPage(),
         '/books': (BuildContext context) => BooksPage(_entries, _deleteEntry),
         '/manage': (BuildContext context) =>
             ManageBooksPage(_addEntry, _deleteEntry),
       },
-
+      // routes with dynamic params
       onGenerateRoute: (RouteSettings settings) {
         // format: '/book/idx'
         final List<String> pathElements = settings.name.split('/');
@@ -54,12 +58,17 @@ class _BookshelfAppState extends State<BookshelfApp> {
         if (pathElements[1] == 'book') {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute<bool>(
-              builder: (BuildContext context) =>
-                  BookPage(_entries[index]['title'], _entries[index]['image']));
+              // TODO: find good way to pass this info
+              builder: (BuildContext context) => BookPage(
+                    _entries[index].title,
+                    _entries[index].authors,
+                    _entries[index].description,
+                    _entries[index].imageLink,
+                  ));
         }
         return null;
       },
-
+      // bad route
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(
           builder: (BuildContext context) => BooksPage(_entries, _deleteEntry),

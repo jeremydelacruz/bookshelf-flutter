@@ -1,9 +1,10 @@
+import 'package:bookshelf/model/book_entry.dart';
 import 'package:flutter/material.dart';
 
 import '../entry_manager.dart';
 
 class BooksPage extends StatelessWidget {
-  final List<Map<String, dynamic>> entries;
+  final List<BookEntry> entries;
   final Function deleteEntry;
 
   BooksPage(this.entries, this.deleteEntry);

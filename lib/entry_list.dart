@@ -1,7 +1,12 @@
+import 'package:bookshelf/model/book_entry.dart';
 import 'package:flutter/material.dart';
 
+/// The EntryList class serves as a stateless UI representation of the
+/// collection of user-added book entries. It also provides the functionality
+/// of tapping and deleting any book in the list. When a user taps an entry,
+/// a page is opened where the full formatted details of that book are displayed.
 class EntryList extends StatelessWidget {
-  final List<Map<String, dynamic>> entries;
+  final List<BookEntry> entries;
   final Function deleteEntry;
 
   EntryList(this.entries, {this.deleteEntry});
@@ -10,8 +15,8 @@ class EntryList extends StatelessWidget {
     return GestureDetector(
       onTap: () =>
           Navigator.pushNamed<bool>(context, '/book/${index.toString()}')
-              .then((bool value) {
-            if (value) deleteEntry(index);
+              .then((bool deleteWasPressed) {
+            if (deleteWasPressed) deleteEntry(index);
           }),
       child: Card(
         child: Row(
@@ -21,7 +26,7 @@ class EntryList extends StatelessWidget {
               height: 120.0,
               width: 120.0,
               child: Image.asset(
-                entries[index]['image'],
+                entries[index].imageLink,
                 fit: BoxFit.fitHeight,
               ),
             ),
@@ -32,9 +37,11 @@ class EntryList extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
+                    // title component
                     Container(
                       child: Text(
-                        entries[index]['title'],
+                        entries[index].title,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontFamily: 'Raleway',
                           fontSize: 18.0,
@@ -42,6 +49,8 @@ class EntryList extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // TODO: authors component
+                    // TODO: description component
                   ],
                 ),
               ),
@@ -63,8 +72,8 @@ class EntryList extends StatelessWidget {
           );
   }
 
-  /// this builder creates a more performant listview that
-  /// only renders what's on screen
+  /// this builder creates a more performant listview that only renders
+  /// what's on screen
   @override
   Widget build(BuildContext context) {
     // TODO: add some text above the list
