@@ -1,3 +1,4 @@
+import 'package:bookshelf/book_card.dart';
 import 'package:bookshelf/model/book_entry.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class EntryList extends StatelessWidget {
 
   EntryList(this.entries, {this.deleteEntry});
 
+  /// called for every UI list entry being built
   Widget _buildEntry(BuildContext context, int index) {
     return GestureDetector(
       onTap: () =>
@@ -18,46 +20,7 @@ class EntryList extends StatelessWidget {
               .then((bool deleteWasPressed) {
             if (deleteWasPressed) deleteEntry(index);
           }),
-      child: Card(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 120.0,
-              width: 120.0,
-              child: Image.asset(
-                entries[index].imageLink,
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(5.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    // title component
-                    Container(
-                      child: Text(
-                        entries[index].title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Raleway',
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    // TODO: authors component
-                    // TODO: description component
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: BookCard(entries[index]),
     );
   }
 
@@ -76,7 +39,6 @@ class EntryList extends StatelessWidget {
   /// what's on screen
   @override
   Widget build(BuildContext context) {
-    // TODO: add some text above the list
     return _buildEntryList();
   }
 }

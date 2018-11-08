@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:bookshelf/book_card.dart';
 import 'package:bookshelf/model/book_entry.dart';
+import 'package:bookshelf/model/gbooks_response.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class BookSearchPage extends StatefulWidget {
   final Function addEntry;
@@ -14,6 +19,7 @@ class BookSearchPage extends StatefulWidget {
 
 class _BookSearchPage extends State<BookSearchPage> {
   String _query = '';
+  GBooksResponse results;
 
   @override
   Widget build(BuildContext context) {
@@ -28,37 +34,56 @@ class _BookSearchPage extends State<BookSearchPage> {
             onChanged: (String value) {
               setState(() {
                 _query = value;
+                search();
               });
+              // either search here (as state changes) or add submit button
             },
           ),
           SizedBox(
             height: 10.0,
           ),
-          RaisedButton(
-            color: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-            child: Text('[ADD]'),
-            onPressed: () {
-              /// replace this with custom object
-              final BookEntry entry = BookEntry(
-                title: _query,
-                authors: ['John', 'Jane'],
-                description: 'Placeholder description',
-                imageLink: 'assets/placeholder.jpg',
-              );
-              // {
-              //   'title': _query,
-              //   'authors': ['John Doe', 'Jane Doe'],
-              //   'description': 'placeholder',
-              //   'image': 'assets/placeholder.jpg'
-              // };
-              widget.addEntry(entry);
-              Navigator.pushReplacementNamed(context, '/books');
-            },
-          )
+          Container(child: _buildResults()),
         ],
       ),
     );
+  }
+
+  Widget _buildResults() {
+    return results != null && results.totalItems > 0
+        ? ListView.builder(
+            itemBuilder: _buildResult,
+            itemCount: results.totalItems,
+          )
+        : Center(
+            child: Text('Start typing to show results!'),
+          );
+  }
+
+  Widget _buildResult(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () => {
+            //   onPressed: () {
+            //     // final BookEntry entry = BookEntry(
+            //     //   title: _query,
+            //     //   authors: ['John', 'Jane'],
+            //     //   description:
+            //     //       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //     //   imageLink: 'assets/placeholder.jpg',
+            //     // );
+            //     // widget.addEntry(entry);
+            //     // Navigator.pushReplacementNamed(context, '/books');
+            //   },
+          },
+      child: BookCard(results.items[index]),
+    );
+  }
+
+  Future<GBooksResponse> search() async {
+    print('executing search...');
+    final jsonResponse =
+        await http.get('https://www.googleapis.com/books/v1/volumes?q=$_query');
+    var jsonBody = json.decode(jsonResponse.body);
+    return GBooksResponse.fromJson(jsonBody);
   }
 }
 

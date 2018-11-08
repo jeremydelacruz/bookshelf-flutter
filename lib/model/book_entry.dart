@@ -1,23 +1,45 @@
-import 'reading_entry.dart';
+//import 'package:flutter/material.dart';
+
 import 'isbn.dart';
 
-class BookEntry extends ReadingEntry {
-  // TODO
-  BookEntry({
-    String title = '',
-    List<String> authors,
-    String description,
-    Isbn isbn, // replace with String and build the ISBN here
-    String imageLink = '',
-    Object image,
-  }) : super(
-          title,
-          authors,
-          description,
-          imageLink,
-        );
+class BookEntry {
+  String _title;
+  List<String> _authors;
+  String _description;
+  Isbn _isbn;
+  String _imageLink;
+  //Image _image;
+  String _url;
 
-  // TODO: implement image
-  @override
-  Object get image => null;
+  BookEntry(
+    this._title,
+    this._authors,
+    this._description,
+    this._isbn,
+    this._imageLink,
+    //this._image,
+    this._url,
+  );
+
+  String get title => this._title;
+  List<String> get authors => this._authors;
+  String get description => this._description;
+  Isbn get isbn => this._isbn;
+  String get url => this._url;
+  String get imageLink => this._imageLink;
+  //Object get image => this._image;
+
+  /// knows how to build itself from json
+  factory BookEntry.fromJson(Map<String, dynamic> parsedJson) {
+    var volumeInfo = parsedJson['volumeInfo'];
+    return BookEntry(
+      volumeInfo['title'],
+      volumeInfo['authors'],
+      volumeInfo['description'],
+      Isbn.fromJson(volumeInfo['industryIdentifiers']),
+      volumeInfo['imageLinks']['thumbnail'],
+      //null,
+      parsedJson['selfLink'],
+    );
+  }
 }
