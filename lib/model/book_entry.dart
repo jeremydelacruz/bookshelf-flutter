@@ -32,9 +32,10 @@ class BookEntry {
   /// knows how to build itself from json
   factory BookEntry.fromJson(Map<String, dynamic> parsedJson) {
     var volumeInfo = parsedJson['volumeInfo'];
+    List<String> authors = List<String>.from(volumeInfo['authors']);
     return BookEntry(
       volumeInfo['title'],
-      volumeInfo['authors'],
+      authors,
       volumeInfo['description'],
       Isbn.fromJson(volumeInfo['industryIdentifiers']),
       volumeInfo['imageLinks']['thumbnail'],

@@ -34,7 +34,11 @@ class _BookSearchPage extends State<BookSearchPage> {
             onChanged: (String value) {
               setState(() {
                 _query = value;
-                search();
+                results = null;
+                search().then((res) {
+                  results = res;
+                });
+                // TODO: set loading state
               });
               // either search here (as state changes) or add submit button
             },
