@@ -35,11 +35,9 @@ class _BookSearchPage extends State<BookSearchPage> {
               setState(() {
                 _query = value;
                 results = null;
-                search().then((res) {
-                  results = res;
-                });
                 // TODO: set loading state
               });
+              search();
               // either search here (as state changes) or add submit button
             },
           ),
@@ -82,12 +80,23 @@ class _BookSearchPage extends State<BookSearchPage> {
     );
   }
 
-  Future<GBooksResponse> search() async {
-    print('executing search...');
-    final jsonResponse =
-        await http.get('https://www.googleapis.com/books/v1/volumes?q=$_query');
-    var jsonBody = json.decode(jsonResponse.body);
-    return GBooksResponse.fromJson(jsonBody);
+  Future search() async {
+    String url = 'https://www.googleapis.com/books/v1/volumes?q=$_query';
+    print('executing search --> $url');
+    // final jsonResponse = await http.get(url);
+    // var jsonBody = json.decode(jsonResponse.body);
+    // setState(() {
+    //   results = GBooksResponse.fromJson(jsonBody);
+    // });
+    http
+        .get(url)
+        .then((jsonResponse) => json.decode(jsonResponse.body))
+        .then((jsonBody) => GBooksResponse.fromJson(jsonBody))
+        .then((gBooksRes) {
+      setState(() {
+        results = gBooksRes;
+      });
+    });
   }
 }
 

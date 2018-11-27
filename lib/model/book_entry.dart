@@ -30,9 +30,12 @@ class BookEntry {
   //Object get image => this._image;
 
   /// knows how to build itself from json
-  factory BookEntry.fromJson(Map<String, dynamic> parsedJson) {
+  factory BookEntry.fromJson(dynamic parsedJson) {
     var volumeInfo = parsedJson['volumeInfo'];
-    List<String> authors = List<String>.from(volumeInfo['authors']);
+    List<String> authors = List();
+    var authorJson = volumeInfo['authors'];
+    if (authorJson != null) authorJson.forEach((author) => authors.add(author));
+
     return BookEntry(
       volumeInfo['title'],
       authors,

@@ -9,8 +9,9 @@ class GBooksResponse {
   GBooksResponse({this.items, this.kind, this.totalItems});
 
   /// builds itself from json
-  factory GBooksResponse.fromJson(Map<String, dynamic> parsedJson) {
+  factory GBooksResponse.fromJson(dynamic parsedJson) {
     var list = parsedJson['items'] as List;
+
     List<BookEntry> itemList = list.map((i) => BookEntry.fromJson(i)).toList();
 
     return GBooksResponse(
