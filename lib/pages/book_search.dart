@@ -56,7 +56,7 @@ class _BookSearchPage extends State<BookSearchPage> {
 
   /// build performant ListView
   Widget _buildResults() {
-    return _results != null && _results.totalItems > 0
+    return _results != null && _query.length > 0
         ? ListView.builder(
             itemBuilder: _buildResult,
             itemCount: _results.totalItems,
