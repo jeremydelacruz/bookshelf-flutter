@@ -2,11 +2,15 @@ import 'package:bookshelf/model/book_entry.dart';
 
 /// represents entire JSON response from Google Books API
 class GBooksResponse {
-  final int totalItems;
-  final String kind;
-  final List<BookEntry> items;
+  final int _totalItems;
+  final String _kind;
+  final List<BookEntry> _items;
 
-  GBooksResponse({this.items, this.kind, this.totalItems});
+  GBooksResponse(this._items, this._kind, this._totalItems);
+
+  int get totalItems => _items.length ?? 0;
+  String get kind => _kind;
+  List<BookEntry> get items => _items;
 
   /// builds itself from json
   factory GBooksResponse.fromJson(dynamic parsedJson) {
@@ -15,8 +19,6 @@ class GBooksResponse {
     List<BookEntry> itemList = list.map((i) => BookEntry.fromJson(i)).toList();
 
     return GBooksResponse(
-        items: itemList,
-        kind: parsedJson['kind'],
-        totalItems: parsedJson['totalItems']);
+        itemList, parsedJson['kind'], parsedJson['totalItems']);
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class BookPage extends StatelessWidget {
+  static const String PLACEHOLDER = "assets/placeholder.jpg";
   final String title;
   final List<String> authors;
   final String description;
@@ -33,6 +34,18 @@ class BookPage extends StatelessWidget {
         });
   }
 
+  Image _renderImage() {
+    return imageUrl == null
+        ? Image.asset(
+            PLACEHOLDER,
+            height: 200,
+          )
+        : Image.network(
+            imageUrl,
+            height: 200,
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -44,13 +57,19 @@ class BookPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(title),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        body: ListView(
+          //crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset(imageUrl),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(description),
+              child: _renderImage(),
+            ),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                description,
+                style: TextStyle(fontSize: 18),
+              ),
             ),
             Container(
               padding: EdgeInsets.all(10.0),

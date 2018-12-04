@@ -1,5 +1,3 @@
-//import 'package:flutter/material.dart';
-
 import 'isbn.dart';
 
 class BookEntry {
@@ -8,7 +6,6 @@ class BookEntry {
   String _description;
   Isbn _isbn;
   String _imageLink;
-  //Image _image;
   String _url;
 
   BookEntry(
@@ -17,32 +14,31 @@ class BookEntry {
     this._description,
     this._isbn,
     this._imageLink,
-    //this._image,
     this._url,
   );
 
-  String get title => this._title;
+  String get title => this._title ?? "Untitled";
   List<String> get authors => this._authors;
-  String get description => this._description;
+  String get description => this._description ?? "No description available.";
   Isbn get isbn => this._isbn;
   String get url => this._url;
   String get imageLink => this._imageLink;
-  //Object get image => this._image;
 
   /// knows how to build itself from json
   factory BookEntry.fromJson(dynamic parsedJson) {
     var volumeInfo = parsedJson['volumeInfo'];
     List<String> authors = List();
     var authorJson = volumeInfo['authors'];
-    if (authorJson != null) authorJson.forEach((author) => authors.add(author));
+    authorJson?.forEach((author) => authors.add(author));
+    var imageLinks = volumeInfo['imageLinks'];
+    var thumbnail = imageLinks != null ? imageLinks['smallThumbnail'] : null;
 
     return BookEntry(
       volumeInfo['title'],
       authors,
       volumeInfo['description'],
-      Isbn.fromJson(volumeInfo['industryIdentifiers']),
-      volumeInfo['imageLinks']['thumbnail'],
-      //null,
+      Isbn.fromJson(volumeInfo['industryIdentifiers'] ?? List()),
+      thumbnail,
       parsedJson['selfLink'],
     );
   }

@@ -6,8 +6,9 @@ import './edit_books.dart';
 class ManageBooksPage extends StatelessWidget {
   final Function addEntry;
   final Function deleteEntry;
+  final Function retrieveGBooksKey;
 
-  ManageBooksPage(this.addEntry, this.deleteEntry);
+  ManageBooksPage(this.addEntry, this.deleteEntry, this.retrieveGBooksKey);
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,10 @@ class ManageBooksPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: <Widget>[BookSearchPage(addEntry), EditBooksPage(deleteEntry)],
+          children: <Widget>[
+            BookSearchPage(addEntry, retrieveGBooksKey),
+            EditBooksPage(deleteEntry)
+          ],
         ),
       ),
     );

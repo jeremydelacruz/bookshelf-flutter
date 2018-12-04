@@ -1,104 +1,113 @@
+import 'dart:async';
 import 'dart:convert';
 
-import 'package:bookshelf/book_card.dart';
-import 'package:bookshelf/model/book_entry.dart';
-import 'package:bookshelf/model/gbooks_response.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:bookshelf/book_card.dart';
+import 'package:bookshelf/model/gbooks_response.dart';
+
 class BookSearchPage extends StatefulWidget {
   final Function addEntry;
+  final Function retrieveGBooksKey;
 
-  BookSearchPage(this.addEntry);
+  BookSearchPage(this.addEntry, this.retrieveGBooksKey);
 
   @override
   State<StatefulWidget> createState() {
-    return _BookSearchPage();
+    return _BookSearchPage(retrieveGBooksKey());
   }
 }
 
 class _BookSearchPage extends State<BookSearchPage> {
+  static const Duration BUFFER = Duration(milliseconds: 500);
+  final Future<String> _apiKey;
   String _query = '';
-  GBooksResponse results;
+  GBooksResponse _results;
+  int _changes = 0;
+
+  _BookSearchPage(this._apiKey);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(10.0),
-
-      /// consider switching to more performant builder
-      child: ListView(
+      child: Column(
         children: <Widget>[
           TextField(
             decoration: InputDecoration(labelText: 'Find a Book'),
             onChanged: (String value) {
               setState(() {
-                _query = value;
-                results = null;
-                // TODO: set loading state
+                _query = value.replaceAll(" ", "%20");
+                _results = null;
+                _changes++;
+                _delaySearch();
               });
-              search();
-              // either search here (as state changes) or add submit button
             },
           ),
           SizedBox(
             height: 10.0,
           ),
-          Container(child: _buildResults()),
+          Expanded(child: _buildResults()),
         ],
       ),
     );
   }
 
+  /// build performant ListView
   Widget _buildResults() {
-    return results != null && results.totalItems > 0
+    return _results != null && _results.totalItems > 0
         ? ListView.builder(
             itemBuilder: _buildResult,
-            itemCount: results.totalItems,
+            itemCount: _results.totalItems,
           )
         : Center(
             child: Text('Start typing to show results!'),
           );
   }
 
+  /// build each visual entry in the ListView
   Widget _buildResult(BuildContext context, int index) {
     return GestureDetector(
-      onTap: () => {
-            //   onPressed: () {
-            //     // final BookEntry entry = BookEntry(
-            //     //   title: _query,
-            //     //   authors: ['John', 'Jane'],
-            //     //   description:
-            //     //       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            //     //   imageLink: 'assets/placeholder.jpg',
-            //     // );
-            //     // widget.addEntry(entry);
-            //     // Navigator.pushReplacementNamed(context, '/books');
-            //   },
-          },
-      child: BookCard(results.items[index]),
+      onTap: () {
+        widget.addEntry(_results.items[index]);
+        Navigator.pushReplacementNamed(context, '/books');
+      },
+      child: BookCard(_results.items[index]),
     );
   }
 
-  Future search() async {
-    String url = 'https://www.googleapis.com/books/v1/volumes?q=$_query';
-    print('executing search --> $url');
-    // final jsonResponse = await http.get(url);
-    // var jsonBody = json.decode(jsonResponse.body);
-    // setState(() {
-    //   results = GBooksResponse.fromJson(jsonBody);
-    // });
+  /// only execute the search if query hasn't been updated in 1 second
+  void _delaySearch() {
+    int currentChanges = _changes;
+    Timer(BUFFER, () => _delaySearchHelper(currentChanges));
+  }
+
+  /// ensure no changes have been made since the last keystroke before searching
+  void _delaySearchHelper(int changesSince) {
+    if (changesSince == _changes) _search();
+  }
+
+  /// asynchronously search Google Books API volumes for user's query
+  Future _search() async {
+    // empty query
+    if (_query.length == 0) {
+      _results = null;
+      return null;
+    }
+
+    String key = await _apiKey;
+    String url =
+        'https://www.googleapis.com/books/v1/volumes?q=$_query&key=$key';
+    print("executing search... --> $url");
+
+    // execute asynchronous search and set the state when it returns a result
     http
         .get(url)
         .then((jsonResponse) => json.decode(jsonResponse.body))
         .then((jsonBody) => GBooksResponse.fromJson(jsonBody))
-        .then((gBooksRes) {
-      setState(() {
-        results = gBooksRes;
-      });
-    });
+        .then((gBooksRes) => setState(() {
+              _results = gBooksRes;
+            }));
   }
 }
-
-// need to add button / action to create a new Entry from the output from
-// the Google Books search

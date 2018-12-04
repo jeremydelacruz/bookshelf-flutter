@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bookshelf/model/book_entry.dart';
 
 class BookCard extends StatelessWidget {
+  static const String PLACEHOLDER = "assets/placeholder.jpg";
   final BookEntry entry;
 
   BookCard(this.entry);
@@ -16,10 +17,15 @@ class BookCard extends StatelessWidget {
           Container(
             height: 120.0,
             width: 120.0,
-            child: Image.asset(
-              entry.imageLink,
-              fit: BoxFit.fitHeight,
-            ),
+            child: entry.imageLink == null
+                ? Image.asset(
+                    PLACEHOLDER,
+                    fit: BoxFit.fitHeight,
+                  )
+                : Image.network(
+                    entry.imageLink,
+                    fit: BoxFit.fitHeight,
+                  ),
           ),
           Expanded(
             child: Container(
@@ -71,9 +77,11 @@ class BookCard extends StatelessWidget {
   Container _descriptionComponent(String description) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5.0),
-      height: 30.0,
+      height: 60.0,
       child: Text(
         description,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontFamily: 'Raleway',
           fontSize: 16.0,
@@ -89,6 +97,6 @@ class BookCard extends StatelessWidget {
       if (result.length > 0) result += ', ';
       result += element;
     });
-    return result;
+    return result.length > 0 ? result : "Anonymous";
   }
 }

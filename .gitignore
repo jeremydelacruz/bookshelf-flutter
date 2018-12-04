@@ -7,3 +7,6 @@
 build/
 
 .flutter-plugins
+
+assets/gbooks_api_key.txt
+android/app/google-services.json
