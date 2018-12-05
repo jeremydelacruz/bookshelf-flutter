@@ -24,7 +24,7 @@ class _BookSearchPage extends State<BookSearchPage> {
   final Future<String> _apiKey;
   String _query = '';
   GBooksResponse _results;
-  int _changes = 0;
+  int _queryHash;
 
   _BookSearchPage(this._apiKey);
 
@@ -40,7 +40,7 @@ class _BookSearchPage extends State<BookSearchPage> {
               setState(() {
                 _query = value.replaceAll(" ", "%20");
                 _results = null;
-                _changes++;
+                _queryHash = _query.hashCode;
                 _delaySearch();
               });
             },
@@ -79,13 +79,13 @@ class _BookSearchPage extends State<BookSearchPage> {
 
   /// only execute the search if query hasn't been updated in 1 second
   void _delaySearch() {
-    int currentChanges = _changes;
-    Timer(BUFFER, () => _delaySearchHelper(currentChanges));
+    int currentQueryHash = _queryHash;
+    Timer(BUFFER, () => _delaySearchHelper(currentQueryHash));
   }
 
   /// ensure no changes have been made since the last keystroke before searching
-  void _delaySearchHelper(int changesSince) {
-    if (changesSince == _changes) _search();
+  void _delaySearchHelper(int oldQueryHash) {
+    if (oldQueryHash == _queryHash) _search();
   }
 
   /// asynchronously search Google Books API volumes for user's query
